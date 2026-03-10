@@ -124,7 +124,6 @@ public class MSButton
   // called by manager
   public void mousePressed () 
   {
-    System.out.println("pressed" + myCol + myRow);
     clicked = true;
     //your code here
     if (mouseButton == RIGHT) {
