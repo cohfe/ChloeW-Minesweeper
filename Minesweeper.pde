@@ -25,11 +25,11 @@ void setup ()
 }
 public void setMines()
 {
-  //your code
-  while (mines.size() < NUM_ROWS*3) {
-    int r = (int)(Math.random()*NUM_ROWS);
-    int c = (int)(Math.random()*NUM_COLS);
-    MSButton newButton = new MSButton(r, c);
+  while (mines.size() < NUM_ROWS * 3) {
+    int r = (int)(Math.random() * NUM_ROWS);
+    int c = (int)(Math.random() * NUM_COLS);
+
+    MSButton newButton = buttons[r][c];
     if (!mines.contains(newButton)) {
       mines.add(newButton);
     }
@@ -123,33 +123,46 @@ public class MSButton
 
   // called by manager
   public void mousePressed () 
-  {
-    clicked = true;
-    //your code here
-    if (mouseButton == RIGHT) {
-      flagged = !flagged;
-      if (!flagged) {
-        clicked = false;
-      }
-    } else {
-      if (mines.contains(this)) {
-        displayLosingMessage();
-      } else if (countMines(myRow, myCol) > 0) {
-        setLabel(countMines(myRow, myCol));
-      } else {
-        for (int r = myRow-1; r <= myRow+1; r++) {
-          for (int c = myCol-1; c <= myCol+1; c++) {
-            if (r == myRow && c == myCol) {
-              continue;
-            }
-            if (isValid(r, c) && (!buttons[r][c].clicked) && (countMines(r, c) == 0)) {
-              buttons[r][c].mousePressed();
+{
+  if (flagged) return;
+
+  clicked = true;
+
+  if (mouseButton == RIGHT) {
+    flagged = !flagged;
+    if (!flagged) {
+      clicked = false;
+    }
+  } 
+  else {
+    if (mines.contains(this)) {
+      displayLosingMessage();
+    } 
+    else {
+      int count = countMines(myRow, myCol);
+      if (count > 0) {
+        setLabel(count);
+      } 
+      else {
+        setLabel("");
+        for (int r = myRow - 1; r <= myRow + 1; r++) {
+          for (int c = myCol - 1; c <= myCol + 1; c++) {
+            if (isValid(r, c) && !buttons[r][c].clicked) {
+              buttons[r][c].clicked = true;
+
+              int neighborCount = countMines(r, c);
+              if (neighborCount > 0) {
+                buttons[r][c].setLabel(neighborCount);
+              } else {
+                buttons[r][c].mousePressed();
+              }
             }
           }
         }
       }
     }
   }
+}
 
   public void draw () 
   {    
